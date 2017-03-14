@@ -8,7 +8,7 @@
 </head>
 <body>
 	<h1>
-		중고도서 통합 검색 시스템입니다.<br/>
+		중고도서 통합 검색 시스템입니다.<br/>dg
 		이동.<img alt="이동" src="resources/enter.jpg" style="">
 	</h1>
 </body>
