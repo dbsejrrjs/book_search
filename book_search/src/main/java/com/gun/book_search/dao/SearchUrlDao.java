@@ -1,6 +1,5 @@
 package com.gun.book_search.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
