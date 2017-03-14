@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tb_search_url">
+	<select id="testSelect" parameterType="int" resultType="com.gun.book_search.vo.SearchUrlVo">
+	  select * from search_url where no = #{i}
+	</select>
+</mapper>
