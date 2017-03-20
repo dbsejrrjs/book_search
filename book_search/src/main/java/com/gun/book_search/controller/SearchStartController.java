@@ -1,8 +1,8 @@
 package com.gun.book_search.controller;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gun.book_search.service.SearchStartService;
-import com.gun.book_search.vo.SearchMainVo;
 
 
 @Controller
@@ -25,14 +24,12 @@ public class SearchStartController {
 	SearchStartService ser;
 
 	@RequestMapping(value = "/searchStart", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> searchMain(Model model, @RequestParam("bookName") String bookName) throws SQLException{
-System.out.println(bookName);
-		List<SearchMainVo> searchMainList = ser.getSearchStartList(bookName);
-		Map<String, String> rst = new HashMap<String, String>();
-		rst.put("bookName",bookName);
+	public @ResponseBody Map<String, Object> searchMain(Model model, @RequestParam("bookName") String bookName) throws SQLException{
+
+		Map<String, Object> maSearchList = ser.getSearchStartList(bookName);
 //		model.addAttribute("searchMainData", ser.getSearchMainList());
-		System.out.println("last");
-		return rst;
+		
+		return maSearchList;
 	}
 
 }

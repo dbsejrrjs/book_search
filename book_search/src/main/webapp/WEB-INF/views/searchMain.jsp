@@ -25,6 +25,7 @@ $(function(){
 			data : "bookName="+$("#bookName").val(),      
 			success:function(args){   
 				alert(args.bookName);
+				console.log(args);
 //                    $("#result").html(args);      
 			},   
 			error:function(e){  
