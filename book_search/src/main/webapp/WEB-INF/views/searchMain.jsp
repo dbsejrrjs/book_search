@@ -64,7 +64,7 @@ $(function(){
 </style>
 </head>
 <body>
-<div id="searchLoading" style="position:absolute; width: 100%; height: 100%; display: none;"><img src="resources/search_loading.gif" alt="검색중" style="position : absolute; left:5%;"/></div>
+<div id="searchLoading" style="position:absolute; width: 100%; height: 100%; display: none; z-index: 999;"><img src="resources/search_loading.gif" alt="검색중" style="position : absolute; left:5%;"/></div>
 	<div>현재 검색 지원 사이트 (${searchMainDataCount})</div>
 	<c:forEach items="${searchMainData}" var="li" varStatus="stus">
 		<div><span>${stus.count}</span> : <span>${li.name}</span></div>
