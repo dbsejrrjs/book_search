@@ -1,8 +1,6 @@
 package com.gun.book_search.controller;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;

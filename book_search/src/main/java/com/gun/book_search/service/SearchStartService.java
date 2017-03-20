@@ -2,8 +2,9 @@ package com.gun.book_search.service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,11 +25,11 @@ public class SearchStartService {
 	@Inject
 	SearchMainDao searchMainDao;
 	
-	public Map<String, Object> getSearchStartList(String bookName){
+	public Map<String, Object> getSearchStartList(String strBookName){
 
 		List<SearchMainVo> rstData = searchMainDao.getSelectAllList();
-		
-		String strUrlText = urlTextRead(rstData.get(0).getUrl()+bookName);
+
+		String strUrlText = urlTextRead(rstData.get(0).getUrl(),strBookName);
 
 		//HTML 태그 및 &nbsp; 삭제 정규식
 		String strTagDelRegex = "<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>|(&nbsp;)";
@@ -38,7 +39,7 @@ public class SearchStartService {
 		
 		//검색된 도서Text 전체 가져오기
 		strTemp = regularConvertDataIf("ss_book_box\">.*(</div><div style=\"clear:both;\"></div></div>)", strUrlText, "WHILE");
-		
+
 		//검색된 도서 배열로 변환
 		String[] arrStrData = strTemp.toString().split("[^\\s]ss_book_box");
 			
@@ -50,7 +51,7 @@ public class SearchStartService {
 		Map<String, String> maDetailInData;
 		
 		//검색 결과
-		maRtnData.put("bookName", bookName);
+		maRtnData.put("bookName", strBookName);
 		maRtnData.put("totalCnt", arrStrData.length);
 		
 		for(int i = 0; i < arrStrData.length; i++){
@@ -77,8 +78,8 @@ public class SearchStartService {
 				maDetailInData.put("targetUrl", strTemp);
 				
 				//대상 지점명
-				strUrlText = urlTextRead(strTemp);
-				strTemp = regularConvertDataIf("\\[[가-힣]*\\]( 서가 단면도)",strUrlText,"IF");
+				strUrlText = urlTextRead(strTemp, "");
+				strTemp = regularConvertDataIf("\\[([가-힣]|\\.|\\s)*\\]( 서가 단면도)",strUrlText,"IF");
 				maDetailInData.put("targetName", strTemp.replaceAll(" 서가 단면도", ""));
 				
 				//대상 가격정보
@@ -93,22 +94,35 @@ public class SearchStartService {
 		}
 			
 		maRtnData.put("searchList", arTotalData);
-//		System.out.println(maRtnData);
 		
 		return maRtnData;
 	}
 
 	//URL에서 Text를 Read
-	public String urlTextRead(String strUrl){
+	public String urlTextRead(String strUrl, String strBookName){
 
 		BufferedReader brText = null;
 		StringBuffer sbUrlText = new StringBuffer();
+		HttpURLConnection urlCon = null;
 		
 		try {
 			URL urlInit = new URL(strUrl);
-			URLConnection urlCon = urlInit.openConnection();
-	
+			urlCon = (HttpURLConnection) urlInit.openConnection();
 			String strConType = urlCon.getContentType().toUpperCase();
+			
+			//파라미터 encoding
+			if(!"".equals(strBookName)){
+				if(strConType.indexOf("UTF-8") != -1){
+					strBookName = URLEncoder.encode(strBookName, "UTF-8");
+				}else{
+					strBookName = URLEncoder.encode(strBookName, "EUC-KR");
+				}
+				
+				urlCon.disconnect();
+				urlInit = new URL(strUrl+strBookName);
+				urlCon = (HttpURLConnection) urlInit.openConnection();
+			}
+	
 			if(strConType.indexOf("UTF-8") != -1){
 				brText = new BufferedReader(new InputStreamReader(urlCon.getInputStream() , "UTF-8"));
 			}else{
@@ -120,12 +134,13 @@ public class SearchStartService {
 				sbUrlText.append(strLine);
 			}
 			brText.close();
-			
+
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
 			try {
 				if(brText != null){ brText.close(); }
+				if(urlCon != null){ urlCon.disconnect(); }
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
