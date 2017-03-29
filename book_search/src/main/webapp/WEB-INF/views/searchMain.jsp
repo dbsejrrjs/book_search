@@ -6,17 +6,47 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>도서 검색</title>
+<link rel="stylesheet" href="webjars/bootstrap/3.3.5/css/bootstrap.min.css">
+<style type="text/css">
+	a{ text-decoration: none; }
+	a:link { color: blue; }
+	a:visited { color: blue; }
+	a:hover { color: red; }
+	
+	#bgImg {
+		background-image: url("resources/background_img_1.jpg");
+		background-repeat:no-repeat;
+		background-size: 100%;
+		opacity: 0.4;
+	}
+	
+	section {
+		padding : 10px;
+	}
+	
+	footer {
+		position: fixed;
+		padding-top : 2px;
+		padding-bottom : 2px;
+		padding-right : 15px;
+		left: 0px;
+		bottom: 0px;
+		width: 100%;
+		text-align: right;
+		background-color: Lavender;
+		font-size: 11px;
+	}
+</style>
 <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js" ></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 $(function(){
-	$("#bookName").css("height", 25);
-	$("#bookName").css("size", 20);
-	$("#searchStart").css("width",25);
-	$("#searchStart").css("height",25);
-	$("#searchStart").css("cursor", "pointer");
-	$("#searchStart").css("vertical-align", "middle");
 
 	$("#searchStart").click(function(){
+		if($("#bookName").val() == ""){
+			alert("검색어를 입력하세요.");
+			return;
+		}
 		$.ajax({
 			type : "POST",
 			async : "true",
@@ -25,9 +55,8 @@ $(function(){
 			data : "bookName="+$("#bookName").val(),      
 			success:function(args){   
 				$("#searchList").empty();
-				console.log(args);
 				$(args.searchList).each(function(i,e){
-					var $divTmp = $("<div>").css("position","relative").css("height","230px");
+					var $divTmp = $("<div>").css("height","230px");
 					$divTmp.append($("<div>").append($("<img>").attr("src",e.bookImg).css("width","150px").css("height","210px")).css("float","left"));
 					
 					var $divInTmp = $("<div>").css("float","left").css("margin-left","10px");
@@ -56,24 +85,48 @@ $(function(){
 	
 });
 </script>
-<style type="text/css">
-	a{ text-decoration: none; }
-	a:link { color: blue; }
-	a:visited { color: blue; }
-	a:hover { color: red; }
-</style>
+
 </head>
 <body>
-<div id="searchLoading" style="position:absolute; width: 100%; height: 100%; display: none; z-index: 999;"><img src="resources/search_loading.gif" alt="검색중" style="position : absolute; left:5%;"/></div>
-	<div>현재 검색 지원 사이트 (${searchMainDataCount})</div>
-	<c:forEach items="${searchMainData}" var="li" varStatus="stus">
-		<div><span>${stus.count}</span> : <span>${li.name}</span></div>
-	</c:forEach>
+	<header>
+		<article>
+			<div id="searchLoading" style="position:absolute; width: 100%; height: 100%; display: none; z-index: 999;"><img src="resources/search_loading.gif" alt="검색중" style="position : absolute; left:20%;"/></div>
+			<div id="bgImg" style="position:fixed; width: 100%; height: 100%; z-index: -1;"></div>
+		</article>
+	</header>
+	<br/><br/>
+	<section>
+		<article>
+			<div class="input-group col-xs-4">
+				<span class="input-group-addon">도서명 검색</span>
+				<input type="text" class="form-control" id="bookName" placeholder="책 제목을 입력하세요.">
+				<div class="input-group-btn">
+					<button class="btn btn-default" id="searchStart">
+					<i class="glyphicon glyphicon-search" ></i>
+					</button>
+				</div>
+			</div> 
+<!-- 				<input type="text" id="bookName" class="form-control"/> -->
+<!-- 				<img alt="검색" src="resources/search.jpg" id="searchStart"/> -->
+		</article>
+	</section>
+	<section>
+		<article>
+		  <ul class="nav nav-pills  nav-justified" style="width: 50%;">
+			  <li role="presentation" class="active"><a href="#">알라딘</a></li>
+			  <li role="presentation"><a href="#" style="background-color:lightgray; color: gray;">YES24</a></li>
+			</ul>
+		</article>
+	</section>
 	<br/>
-	<div>
-		도서명 검색 : <input type="text" id="bookName"/> <img alt="검색" src="resources/search.jpg" id="searchStart"/>
-	</div>
-	<br/>
-	<div id="searchList" style=""></div>
+	<section>
+		<article>
+			<div id="searchList" style=""></div>
+		</article>
+	</section>
+	
+	<footer>
+		중고도서 통합 검색 (Dukgun Yoon)/(${searchMainDataCount})/<c:forEach items="${searchMainData}" var="li" varStatus="stus">${li.name}/</c:forEach>
+	</footer>
 </body>
 </html>
